@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>rqt_bag_diagnostics_demo</name>
+  <version>0.0.0</version>
+  <description>TODO: Package description</description>
+  <maintainer email="davidvlu@gmail.com">David V. Lu!!</maintainer>
+  <license>BSD</license>
+
+  <depend>diagnostic_msgs</depend>
+  <depend>rqt_bag</depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+    <rqt_bag plugin="${prefix}/plugins.xml"/>
+  </export>
+</package>
