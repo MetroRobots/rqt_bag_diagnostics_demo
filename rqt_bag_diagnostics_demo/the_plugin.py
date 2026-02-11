@@ -5,8 +5,8 @@ from python_qt_binding.QtGui import QBrush, QPainter, QPen
 from diagnostic_msgs.msg import DiagnosticStatus
 from rqt_bag import TopicMessageView, TimelineRenderer
 from rclpy.time import Time
-import math
 from rclpy.serialization import deserialize_message
+from rqt_bag.bag_helper import to_sec
 
 
 def get_color(diagnostic):
@@ -35,32 +35,29 @@ class DiagnosticPanel(TopicMessageView):
         self.widget.update()
 
     def paintEvent(self, event):
-        self.qp = QPainter()
-        self.qp.begin(self.widget)
+        qp = QPainter()
+        qp.begin(self.widget)
 
         rect = event.rect()
 
         if self.msg is None:
-            self.qp.fillRect(0, 0, rect.width(), rect.height(), Qt.white)
+            qp.fillRect(0, 0, rect.width(), rect.height(), Qt.white)
         else:
             color = get_color(self.msg)
-            self.qp.setBrush(QBrush(color))
-            self.qp.drawEllipse(0, 0, rect.width(), rect.height())
-        self.qp.end()
+            qp.setBrush(QBrush(color))
+            qp.drawEllipse(0, 0, rect.width(), rect.height())
+        qp.end()
 
 
 class DiagnosticTimeline(TimelineRenderer):
     def __init__(self, timeline, height=80):
         TimelineRenderer.__init__(self, timeline, msg_combine_px=height)
 
-    def draw_timeline_segment(self, painter, topic, start, end, x, y, width, height):
-        def _convert_stamp(float_t):
-            nano, sec = math.modf(float_t)
-            return Time(seconds=int(sec), nanoseconds=int(nano * 1e9))
-
+    def draw_timeline_segment(self, painter: QPainter, topic, start: float, end: float,
+                              x: float, y: int, width: float, height: int):
         bag_timeline = self.timeline.scene()
-        start_t = _convert_stamp(start)
-        end_t = _convert_stamp(end)
+        start_t = Time(seconds=start)
+        end_t = Time(seconds=end)
 
         for bag, entry in bag_timeline.get_entries_with_bags([topic], start_t, end_t):
             topic, raw_data, t = bag_timeline.read_message(bag, entry.timestamp, topic)
@@ -69,7 +66,7 @@ class DiagnosticTimeline(TimelineRenderer):
             painter.setBrush(QBrush(color))
             painter.setPen(QPen(color, 5))
 
-            p_x = self.timeline.map_stamp_to_x(t / 1e9)
+            p_x = int(self.timeline.map_stamp_to_x(to_sec(Time(nanoseconds=t))))
             painter.drawLine(p_x, y, p_x, y + height - 1)
 
 

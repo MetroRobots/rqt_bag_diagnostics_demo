@@ -3,12 +3,13 @@
 <package format="3">
   <name>rqt_bag_diagnostics_demo</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
+  <description>Demo rqt_bag plugin for diagnostics_msgs</description>
   <maintainer email="davidvlu@gmail.com">David V. Lu!!</maintainer>
   <license>BSD</license>
 
-  <depend>diagnostic_msgs</depend>
-  <depend>rqt_bag</depend>
+  <exec_depend>diagnostic_msgs</exec_depend>
+  <exec_depend>python_qt_binding</exec_depend>
+  <exec_depend>rqt_bag</exec_depend>
 
   <export>
     <build_type>ament_python</build_type>
